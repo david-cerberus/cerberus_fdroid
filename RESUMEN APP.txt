@@ -1,0 +1,131 @@
+================================================================================
+          CERBERUS - GESTOR DE CONTRASEÑAS SEGURO (SECURE PASSWORD MANAGER)
+               RESUMEN TÉCNICO Y ARQUITECTURA DE LA APLICACIÓN
+================================================================================
+
+1. DESCRIPCIÓN GENERAL
+--------------------------------------------------------------------------------
+Cerberus es una aplicación multiplataforma (Android, iOS, Windows, Linux, macOS)
+construida con Flutter/Dart. Su objetivo principal es ofrecer almacenamiento seguro
+de credenciales, contraseñas, notas, archivos adjuntos y códigos TOTP (2FA), 
+priorizando la privacidad total del usuario mediante cifrado local de extremo a extremo
+y sincronización en la nube opcional y aislada.
+
+- Versión actual: 1.1.7 (build 41)
+- Identificador/Paquete: com.dsvdevelopment.cerberus (Android applicationId) / secure_password_manager
+- Publicación F-Droid: Archivo de metadatos y receta oficial 'com.dsvdevelopment.cerberus.yml' preparado para fdroiddata.
+- SDK Flutter/Dart: Dart SDK ^3.12.0
+- Estilo visual: Material Design 3 con Google Fonts (Rubik), paleta Corporate Purple,
+  soporte de temas Claro y Oscuro dinámicos.
+
+
+2. SEGURIDAD Y CRIPTOGRAFÍA
+--------------------------------------------------------------------------------
+A. Cifrado de Base de Datos (Zero-Knowledge):
+   - Motor: SQLCipher (sqflite_sqlcipher v3.4.0).
+   - Derivación de clave: PBKDF2 con HMAC-SHA256 y 600.000 iteraciones (CryptoService).
+   - Longitud de clave: 256 bits (32 bytes en formato Hex).
+   - Salt: Salt criptográfico aleatorio de 32 bytes generado con Random.secure() por cada
+     instalación y almacenado en almacenamiento seguro de plataforma (FlutterSecureStorage /
+     Android Keystore / iOS Keychain).
+   - Base de datos local: "secure_entries.db".
+
+B. Autenticación Biométrica y Bloqueo:
+   - Integración nativa mediante 'local_auth' (huella dactilar, Face ID o PIN/contraseña del sistema).
+   - Bloqueo por tiempo de inactividad configurable y bloqueo al enviar la app a segundo plano.
+
+C. Seguridad de Memoria:
+   - Limpieza de buffers en memoria para contraseñas y claves (métodos clearMemory() sobre Uint8List).
+
+
+3. ESTRUCTURA DE DATOS (MODELOS)
+--------------------------------------------------------------------------------
+A. EntryModel (lib/models/entry_model.dart):
+   - id: UUID v4 único.
+   - title: Título del servicio/cuenta.
+   - username: Usuario o correo electrónico.
+   - password: Clave almacenada.
+   - website: URL del servicio.
+   - notes: Notas adicionales en texto libre.
+   - updatedAt: Marca de tiempo ISO-8601.
+   - deleted: Borrado lógico (recuperable / papelera).
+   - isFavorite: Marcador de favorito.
+   - category: Clasificación de la tarjeta (General, Trabajo, Personal, etc.).
+   - customFields: Lista de campos personalizados adicionales (CustomField: name, value, isSecure).
+   - passwordHistory: Historial de contraseñas anteriores con fecha de modificación (PasswordHistoryItem).
+   - totpSecret: Clave secreta para generación de códigos 2FA temporales.
+
+B. AttachmentModel (lib/models/attachment_model.dart):
+   - id: Identificador auto-incremental.
+   - entryId: Relación foránea con la entrada en 'entries' (ON DELETE CASCADE).
+   - fileName: Nombre original del archivo.
+   - mimeType: Tipo MIME (ej. image/jpeg, application/pdf).
+   - fileBytes: Contenido en binario (BLOB) almacenado cifrado dentro de la BD SQLCipher.
+   - Límite máximo: 20 MB por archivo adjunto (con compresión automática de imágenes >1MB a JPEG 80%).
+
+C. CredentialEntry (lib/models/credential_entry.dart):
+   - Modelo estandarizado para operaciones de importación y exportación de credenciales con otros gestores.
+
+
+4. SERVICIOS Y LÓGICA DE NEGOCIO (lib/services/)
+--------------------------------------------------------------------------------
+A. DatabaseHelper (database_helper.dart):
+   - Singleton para inicialización, migraciones (v1 a v7) y consultas directas a SQLCipher.
+   - Tablas: 'entries', 'attachments', 'cache_asset_links'.
+
+B. GoogleDriveService (google_drive_service.dart):
+   - Sincronización en la nube con Google Drive usando 'googleapis' y 'google_sign_in'.
+   - Alcance restringido: drive.DriveApi.driveAppdataScope (carpeta privada de la app 'appDataFolder').
+   - Los datos quedan aislados, el usuario no los borra por error en su Drive visible.
+   - Se sube la base de datos ya cifrada 'secure_entries.db', preservando el salt en los metadatos.
+
+C. AutofillHandlerService & AssetLinkService:
+   - Servicio para autocompletado nativo en Android mediante MethodChannel ('com.cerberus.autofill/channel').
+   - Detección de apps mediante paquete y resolución de dominios web asociados con Digital Asset Links (DAL).
+
+D. SecurityHealthService (security_health_service.dart):
+   - Auditor de salud y seguridad de contraseñas.
+   - Detecta contraseñas débiles (< 8 caracteres, solo un tipo de carácter o presentes en diccionario común).
+   - Detecta contraseñas reutilizadas entre múltiples cuentas y aplica penalizaciones al cálculo de salud.
+   - Genera reportes con puntuación de 0 a 100 y recomendaciones.
+
+E. PasswordGeneratorService (password_generator_service.dart):
+   - Generador seguro de contraseñas con caracteres aleatorios basados en recetas (longitud, mayúsculas,
+     minúsculas, números y símbolos especiales).
+
+F. ImportExportService (import_export/):
+   - Soporte multiformato para migrar contraseñas hacia y desde otros gestores:
+     * JSON plano (.json)
+     * JSON Cifrado (.cerberus / .json)
+     * KeePass (.kdbx v3 / v4)
+     * 1Password (.1pux)
+     * CSV (Bitwarden, Chrome, etc.)
+
+G. PurchaseService & PremiumGate:
+   - Pasarela In-App Purchases para Google Play ('cerberus_premium_lifetime').
+   - Actualmente configurada en modo libre para los usuarios mientras los productos de facturación están en transición.
+
+H. ReviewService:
+   - Petición de reseñas en Google Play mediante 'in_app_review'.
+
+
+5. PANTALLAS Y EXPERIENCIA DE USUARIO (lib/screens/)
+--------------------------------------------------------------------------------
+A. HomeScreen (home_screen.dart):
+   - Pantalla principal: listado de credenciales, barra de búsqueda en tiempo real, filtros por categorías y favoritos.
+   - Visualización de logos/favicons automáticos mediante el servicio público de Google Favicons
+     (https://www.google.com/s2/favicons?sz=128&domain=<dominio>) basado en el dominio de cada entrada.
+   - Creación, edición, clonación, borrado y papelera de reciclaje.
+   - Visor de archivos adjuntos y visor de contraseñas con opción de copiado rápido a portapapeles.
+   - Menú lateral y diálogos para exportar/importar, cambiar tema, idiomas y sincronizar con Google Drive.
+
+B. SecurityHealthScreen (security_health_screen.dart):
+   - Panel de control de seguridad que muestra la puntuación global del llavero, entradas en riesgo,
+     contraseñas repetidas y accesos directos para corregirlas.
+
+
+6. INTERNACIONALIZACIÓN (l10n)
+--------------------------------------------------------------------------------
+- Soporte multilingüe completo (español, inglés, francés, alemán, italiano, portugués, etc.)
+  utilizando el generador oficial de localización de Flutter ('flutter_localizations', arb files).
+================================================================================

@@ -1,0 +1,39 @@
+Categories:
+  - Security
+License: MIT
+AuthorName: DSV Development
+AuthorEmail: cerberus.keypass@gmail.com
+SourceCode: https://github.com/david-cerberus/cerberus
+IssueTracker: https://github.com/david-cerberus/cerberus/issues
+
+AutoName: Cerberus
+Summary: Secure and private zero-knowledge password manager
+Description: |-
+  Cerberus is a secure, offline-first, and zero-knowledge password manager designed to protect credentials, secure notes, attachments, and two-factor authentication codes (TOTP / 2FA).
+
+  Key Features:
+  * Military-grade local encryption powered by SQLCipher (AES-256) with PBKDF2 key derivation (600,000 iterations).
+  * Biometric authentication (fingerprint and face unlock).
+  * Built-in secure password generator and comprehensive password health analysis.
+  * Native Android Autofill Service integration.
+  * Integrated 2FA authenticator (TOTP) with QR code scanner support.
+  * Local backup, import, and export supporting KeePass (.kdbx) and encrypted CSV.
+  * Optional cloud backup and sync via Google Drive with end-to-end encryption.
+
+RepoType: git
+Repo: https://github.com/david-cerberus/cerberus.git
+
+Builds:
+  - versionName: 1.1.7
+    versionCode: 41
+    commit: 85f56c1f1ec78b0e8b15eeea26715b573f00ca89
+    subdir: .
+    output: build/app/outputs/flutter-apk/app-release.apk
+    build:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.1.7
+CurrentVersionCode: 41

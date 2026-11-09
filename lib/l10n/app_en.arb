@@ -1,0 +1,434 @@
+{
+  "@@locale": "en",
+  "sessionClosedInactivity": "Session closed due to inactivity.",
+  "sessionClosedInactivityFiveMin": "Session closed after 5 minutes of inactivity.",
+  "enableFingerprintTitle": "Enable Fingerprint?",
+  "enableFingerprintContent": "Would you like to enable quick access with your fingerprint for future sessions?",
+  "noThanks": "No, thank you",
+  "yesEnable": "Yes, enable",
+  "biometricEnabledSuccess": "Biometric access successfully enabled.",
+  "biometricEnabledError": "Unable to enable biometric access: {error}",
+  "@biometricEnabledError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadingEntries": "Error loading entries: {error}",
+  "@errorLoadingEntries": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "connectedDriveSuccess": "Successfully connected to Google Drive.",
+  "connectedDriveError": "Error connecting to Google Drive: {error}",
+  "@connectedDriveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "driveSessionClosed": "Google Drive session closed.",
+  "driveSignOutError": "Error logging out of Google: {error}",
+  "@driveSignOutError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "uploadingBackup": "Uploading backup to Google Drive...",
+  "backupUploadSuccess": "Backup successfully uploaded to Drive.",
+  "backupUploadError": "Error uploading to Drive: {error}",
+  "@backupUploadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadingBackup": "Searching and downloading backup from Google Drive...",
+  "backupRestoreSuccess": "Backup successfully restored from Drive.",
+  "noBackupsOnDrive": "No backups saved on Drive.",
+  "backupDownloadError": "Error downloading from Drive: {error}",
+  "@backupDownloadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "csvImportSuccess": "Success! {count} passwords imported.",
+  "@csvImportSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportError": "Error importing CSV: {error}",
+  "@csvImportError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorAdding": "Error adding: {error}",
+  "@errorAdding": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorUpdating": "Error updating: {error}",
+  "@errorUpdating": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorDeleting": "Error deleting: {error}",
+  "@errorDeleting": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "copiedToClipboard": "{label} copied to the clipboard!",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "addCustomField": "Add custom field",
+  "titleRequired": "Title is required",
+  "deleteCredentialTitle": "Delete Credential?",
+  "deleteCredentialContent": "The credential will be moved to the trash. You can restore it or sync the change.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "disconnectDriveTitle": "Disconnect Google Drive?",
+  "disconnectDriveContent": "Are you sure you want to disconnect your Google Drive account? Automatic backups will be disabled.",
+  "disconnect": "Disconnect",
+  "manageCategories": "Manage Categories",
+  "cannotDeleteGeneral": "The \"General\" category cannot be deleted.",
+  "categoryExists": "This category already exists.",
+  "close": "Close",
+  "renameCategory": "Rename Category",
+  "save": "Save",
+  "passwordPattern": "Password Pattern",
+  "capitalizeRandomLetter": "Randomly Capitalize Letters",
+  "customPatternSaved": "Custom password pattern saved.",
+  "biometricRequiredExport": "Biometric authentication is required for exporting and is not available on this device.",
+  "credentials": "Credentials",
+  "search": "Search...",
+  "addCredential": "Add Credential",
+  "editCredential": "Edit Credential",
+  "title": "Title",
+  "username": "Username",
+  "password": "Password",
+  "websiteUrl": "Website / URL",
+  "notes": "Notes",
+  "category": "Category",
+  "categoryGeneral": "General",
+  "categoryWork": "Work",
+  "categoryPersonal": "Personal",
+  "securityHealth": "Security Health",
+  "passwordAnalysis": "Password Analysis",
+  "securityScore": "Security Score",
+  "weakPasswords": "Weak Passwords",
+  "reusedPasswords": "Reused Passwords",
+  "compromisedPasswords": "Compromised Passwords",
+  "strongPasswords": "Strong Passwords",
+  "analysisDetails": "Analysis Details",
+  "weakReusedRecommendation": "It is recommended to change weak or reused passwords to improve security.",
+  "noSecurityIssues": "No security issues were found.",
+  "excellentSecure": "Excellent! Your passwords are secure.",
+  "refresh": "Refresh",
+  "lastAnalyzedRecently": "Last analysis was recently performed",
+  "globalSecurityScore": "Global Security Score",
+  "weakPasswordsCount": "{count} Weak Passwords",
+  "@weakPasswordsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weakPasswordsSubtitle": "Length under 8 characters or very common",
+  "noWeakPasswords": "Excellent! You have no weak passwords.",
+  "reusedPasswordsCount": "{count} Reused Passwords",
+  "@reusedPasswordsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reusedPasswordsSubtitle": "Same password used across multiple accounts",
+  "noReusedPasswords": "Excellent! Each account has a unique password.",
+  "accountsUsePassword": "{count} accounts use this password",
+  "@accountsUsePassword": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "securePasswordsCount": "{count} Ultra-Secure Passwords",
+  "@securePasswordsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "strongPasswordsSubtitle": "Unique and robust",
+  "noStrongPasswords": "You don't have secure passwords yet.",
+  "writeTitleGenerate": "Please write a title first to generate the password.",
+  "passwordGeneratorTitle": "Password Generator",
+  "generatorExplanation": "Generated based on your secure structural pattern.",
+  "regenerate": "Regenerate",
+  "accept": "Accept",
+  "securityHealthTitle": "My Password Health",
+  "csvActionsTitle": "Import / Export",
+  "importCsv": "Import from CSV / XML",
+  "exportCsv": "Export to CSV",
+  "exportXml": "Export to XML",
+  "createMasterPassword": "Create Master Password",
+  "enterMasterPassword": "Enter Master Password",
+  "registerSubtitle": "Set a strong password to protect your data. It cannot be recovered if you forget it.",
+  "loginSubtitle": "This password is used to decrypt your local database.",
+  "masterPasswordLabel": "Master Password",
+  "confirmPasswordLabel": "Confirm Password",
+  "registerSave": "Register and Save",
+  "unlock": "Unlock",
+  "incorrectPassword": "Incorrect password. Try again.",
+  "unexpectedError": "Unexpected error: {error}",
+  "@unexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "logoutError": "Error closing session: {error}",
+  "@logoutError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "googleSignInError": "Error starting Google session: {error}",
+  "@googleSignInError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "lightTheme": "Light Theme",
+  "darkTheme": "Dark Theme",
+  "categoryAll": "All",
+  "categoryBanks": "Banks",
+  "categoryWebAccounts": "Web Accounts",
+  "categoryEmails": "Emails",
+  "categoryForums": "Forums",
+  "categoryRouter": "Router",
+  "categoryStore": "Store",
+  "categoryOthers": "Others",
+  "weakPassword": "Weak password",
+  "mediumPassword": "Medium password",
+  "strongPassword": "Strong password",
+  "edit": "Edit",
+  "userOrEmail": "Username / Email",
+  "website": "Website",
+  "field": "Field",
+  "newCategory": "New Category",
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "passwordLength": "Password Length: {length}",
+  "@passwordLength": {
+    "placeholders": {
+      "length": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordLengthHelper": "At least one uppercase, lowercase, number, and symbol will be included.",
+  "newNameLabel": "New name",
+  "fixedPrefixLabel": "Fixed prefix",
+  "fixedPrefixHelper": "Example: Key",
+  "numbersListLabel": "List of numbers (comma separated)",
+  "numbersListHelper": "Example: 10, 20, 30",
+  "specialSymbolLabel": "Special symbol",
+  "specialSymbolHelper": "Example: _",
+  "titleLettersLabel": "Title letters",
+  "titleLettersHelper": "Amount of characters taken from the title.",
+  "criticalDanger": "CRITICAL DANGER!",
+  "csvExportWarning": "WARNING! The CSV file you are about to generate is NOT encrypted. Anyone or any application with access to your phone will be able to see your passwords in plain text. It is strongly recommended to send or copy this file to a secure place (like your personal computer) and delete it immediately from the Downloads folder of this phone.",
+  "understandRiskSave": "I understand the risk, save",
+  "csvExportSuccessNoCount": "Passwords exported successfully!",
+  "csvExportError": "Error saving file: {error}",
+  "@csvExportError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "biometricReasonExport": "Confirm your fingerprint to authorize the export of your passwords.",
+  "authError": "Authentication error: {error}",
+  "@authError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "authFailed": "Biometric authentication failed.",
+  "cloudSyncTitle": "Sync with Google Drive",
+  "cloudSyncSubtitle": "Link your Google account to back up your local database securely.",
+  "connectGoogleDrive": "Connect Google Drive",
+  "linkedAccount": "Linked account:\n{email}",
+  "@linkedAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "lastBackup": "Last backup: {time}",
+  "@lastBackup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noBackupsOnAccount": "No backups saved on this account yet.",
+  "uploadToDrive": "Upload to Drive",
+  "downloadFromDrive": "Download from Drive",
+  "disconnectGoogleDrive": "Disconnect Google Drive",
+  "emptyKeychain": "Empty Keychain",
+  "emptyKeychainSubtitle": "Add an account using the bottom (+) button or import a CSV file from the top menu.",
+  "noMatchesFound": "No matches found.",
+  "favoritesHeader": "My Favorites",
+  "configureFieldTitle": "Configure Field",
+  "fieldNameLabel": "Name",
+  "fieldValueLabel": "Value",
+  "addNewFieldTitle": "Add new field",
+  "fieldDate": "Date",
+  "fieldWebAddress": "Web Address",
+  "fieldEmail": "Email",
+  "fieldPin": "PIN",
+  "logout": "Log Out",
+  "additionalNotes": "Additional notes",
+  "copyTooltip": "Copy",
+  "deleteFieldTooltip": "Delete field",
+  "generatePasswordTooltip": "Generate password",
+  "titleOrServiceName": "Title / Service Name",
+  "newCredential": "New Credential",
+  "connectionCancelled": "Connection cancelled",
+  "connectGoogleDriveFirst": "Please connect Google Drive first.",
+  "sessionPasswordUnavailable": "Session password unavailable.",
+  "checkStorageError": "Error checking storage status: {error}",
+  "@checkStorageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprintScanReason": "Scan your fingerprint to access your password manager",
+  "biometricAuthError": "Biometric authentication error: {error}",
+  "@biometricAuthError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "fingerprintSetupReason": "Confirm your fingerprint to activate biometric access",
+  "localDbNotExist": "The local database file does not exist.",
+  "cannotReadSelectedFile": "Could not read data from the selected file.",
+  "passwordEmpty": "Password cannot be empty.",
+  "passwordsDoNotMatch": "Passwords do not match.",
+  "dbInitError": "Error initializing the database: {error}",
+  "@dbInitError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "enterMasterPasswordPrompt": "Please enter your master password.",
+  "incorrectPasswordError": "Incorrect password. Please try again.",
+  "deleteFromDrive": "Delete Data from Drive",
+  "deleteDriveTitle": "Delete from Drive?",
+  "deleteDriveWarning": "Are you sure you want to delete your backup from Google Drive? This action cannot be undone.",
+  "deleteDriveSuccess": "Backup successfully deleted from Drive.",
+  "deleteDriveError": "Error deleting from Drive: {error}",
+  "@deleteDriveError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deletingFromDrive": "Deleting backup from Drive...",
+  "premiumTitle": "Cerberus Premium",
+  "premiumSubtitle": "Unlock the full potential of your password manager with a one-time lifetime payment:",
+  "premiumFeatureDriveTitle": "Google Drive Backup",
+  "premiumFeatureDriveSubtitle": "Sync and restore your data in the cloud.",
+  "premiumFeatureCsvTitle": "Import & Export",
+  "premiumFeatureCsvSubtitle": "Import your credentials from KDBX, 1PUX, Json, XML and CSV. Export to KDBX, Json, XML and CSV.",
+  "premiumBuyButton": "Buy Premium (€1.99)",
+  "premiumRestoreButton": "Restore previous purchase",
+  "premiumSuccessMessage": "Purchases restored successfully.",
+  "menuHaztePremium": "Go Premium",
+  "menuCuentaPremium": "Premium Account",
+  "menuRecuperarPremium": "Recover premium account",
+  "premiumActiveMessage": "Thank you for your support! You have lifetime unlimited access to the following features:",
+  "importData": "Import",
+  "importDataSubtitle": "Import from KDBX, 1PUX, Json, CSV or XML",
+  "exportData": "Export",
+  "exportDataSubtitle": "Select the format to export",
+  "exportToKdbx": "Export to KDBX",
+  "passwordRequired": "Password required to export",
+  "exportToJson": "Export to JSON",
+  "exportJsonRecommended": "For security, we recommend protecting this file with a password.",
+  "exportJsonSecureBtn": "Export encrypted Json (Recommended)",
+  "exportJsonPlainBtn": "Export unencrypted Json (Not recommended)",
+  "exportKdbxDesc": "Enter the master password for your new KeePass database.\n\nThis password will lock the .kdbx file and doesn't need to be the same as Cerberus'.",
+  "passwordForFile": "Password for file",
+  "importFormatsList": "You can import the following formats:\n  - KDBX\n  - 1PUX\n  - Json\n  - XML\n  - CSV",
+  "historyTitle": "Password History",
+  "historyEmpty": "No old passwords saved.",
+  "historyCopied": "Copied to clipboard",
+  "historyMainPassword": "Main Password",
+  "historyChangedAt": "Changed on {date}",
+  "historyCloseBtn": "CLOSE",
+  "historyViewBtn": "View history",
+  "attachmentsTitle": "Attachments",
+  "openingFile": "Opening file...",
+  "attachmentSaved": "Attachment saved",
+  "scanTotpQr": "Scan TOTP QR",
+  "totpSecretLabel": "TOTP Secret (Base32) optional",
+  "pasteFromClipboard": "Paste from clipboard",
+  "scanQrTooltip": "Scan QR",
+  "processingFile": "Processing...",
+  "addBtn": "Add",
+  "closeBtn": "Close",
+  "noPreviousPurchases": "No previous purchases found on this Google account."
+}
