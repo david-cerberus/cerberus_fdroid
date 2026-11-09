@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/entry_model.dart';
 import '../services/security_health_service.dart';
 import '../services/password_generator_service.dart';
@@ -267,7 +266,7 @@ class _SecurityHealthScreenState extends State<SecurityHealthScreen> {
                         TextField(
                           controller: passwordController,
                           obscureText: obscurePassword,
-                          style: GoogleFonts.firaCode(),
+                          style: const TextStyle(fontFamily: 'monospace'),
                           onChanged: (val) {
                             setModalState(() {});
                           },
@@ -484,10 +483,11 @@ class _SecurityHealthScreenState extends State<SecurityHealthScreen> {
                     child: Center(
                       child: SelectableText(
                         generated,
-                        style: GoogleFonts.firaCode(
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
+                          color: Color(0xFF10B981),
                         ),
                       ),
                     ),
@@ -660,7 +660,7 @@ class _SecurityHealthScreenState extends State<SecurityHealthScreen> {
                               title: Text(entry.title, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                               subtitle: Row(
                                 children: [
-                                  Expanded(child: Text(obscure ? '••••••••' : entry.password, style: GoogleFonts.firaCode(color: isDark ? Colors.grey : Colors.black54))),
+                                  Expanded(child: Text(obscure ? '••••••••' : entry.password, style: TextStyle(fontFamily: 'monospace', color: isDark ? Colors.grey : Colors.black54))),
                                   IconButton(
                                     icon: Icon(obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 18, color: isDark ? Colors.grey : Colors.black54),
                                     onPressed: () => setStateItem(() => obscure = !obscure),
@@ -712,7 +712,7 @@ class _SecurityHealthScreenState extends State<SecurityHealthScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Expanded(child: Text(obscure ? '••••••••' : group.key, style: GoogleFonts.firaCode(fontSize: 14, color: Colors.orangeAccent))),
+                                          Expanded(child: Text(obscure ? '••••••••' : group.key, style: const TextStyle(fontFamily: 'monospace', fontSize: 14, color: Colors.orangeAccent))),
                                           IconButton(
                                             icon: Icon(obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 18, color: isDark ? Colors.grey : Colors.black54),
                                             onPressed: () => setStateGroup(() => obscure = !obscure),
@@ -764,7 +764,7 @@ class _SecurityHealthScreenState extends State<SecurityHealthScreen> {
                               title: Text(entry.title, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                               subtitle: Row(
                                 children: [
-                                  Expanded(child: Text(obscure ? '••••••••' : entry.password, style: GoogleFonts.firaCode(color: isDark ? Colors.grey : Colors.black54))),
+                                  Expanded(child: Text(obscure ? '••••••••' : entry.password, style: TextStyle(fontFamily: 'monospace', color: isDark ? Colors.grey : Colors.black54))),
                                   IconButton(
                                     icon: Icon(obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, size: 18, color: isDark ? Colors.grey : Colors.black54),
                                     onPressed: () => setStateItem(() => obscure = !obscure),

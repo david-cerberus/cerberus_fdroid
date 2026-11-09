@@ -23,45 +23,6 @@
       }
     }
   },
-  "connectedDriveSuccess": "Conectado ao Google Drive com sucesso.",
-  "connectedDriveError": "Erro ao conectar ao Google Drive: {error}",
-  "@connectedDriveError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "driveSessionClosed": "Sessão do Google Drive encerrada.",
-  "driveSignOutError": "Erro ao encerrar sessão do Google: {error}",
-  "@driveSignOutError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "uploadingBackup": "Enviando backup para o Google Drive...",
-  "backupUploadSuccess": "Backup enviado para o Drive com sucesso.",
-  "backupUploadError": "Erro ao enviar para o Drive: {error}",
-  "@backupUploadError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "downloadingBackup": "Buscando e baixando backup do Google Drive...",
-  "backupRestoreSuccess": "Backup restaurado com sucesso do Drive.",
-  "noBackupsOnDrive": "Nenhum backup encontrado no Drive.",
-  "backupDownloadError": "Erro ao baixar do Drive: {error}",
-  "@backupDownloadError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
   "csvImportSuccess": "Sucesso! {count} senhas foram importadas.",
   "@csvImportSuccess": {
     "placeholders": {
@@ -113,48 +74,25 @@
   "addCustomField": "Adicionar campo personalizado",
   "titleRequired": "O título é obrigatório",
   "deleteCredentialTitle": "Excluir Credencial?",
-  "deleteCredentialContent": "A credencial será movida para a lixeira. Você poderá restaurá-la ou sincronizar a alteração.",
+  "deleteCredentialContent": "A credencial será movida para a lixeira. Pode restaurá-la quando quiser.",
   "cancel": "Cancelar",
   "delete": "Excluir",
-  "disconnectDriveTitle": "Desconectar Google Drive?",
-  "disconnectDriveContent": "Tem certeza de que deseja desconectar sua conta do Google Drive? Os backups automáticos serão desativados.",
-  "disconnect": "Desconectar",
   "manageCategories": "Gerenciar Categorias",
-  "cannotDeleteGeneral": "Não é possível excluir a categoria Geral.",
   "categoryExists": "Esta categoria já existe.",
   "close": "Fechar",
   "renameCategory": "Renomear Categoria",
   "save": "Salvar",
   "passwordPattern": "Gerador de Senhas",
-  "capitalizeRandomLetter": "Capitalizar letra aleatória",
   "customPatternSaved": "Gerador salvo com sucesso!",
   "biometricRequiredExport": "A autenticação biométrica é obrigatória para exportar e não está disponível neste dispositivo.",
-  "credentials": "Credenciais",
   "search": "Buscar...",
-  "addCredential": "Adicionar Credencial",
   "editCredential": "Editar Credencial",
-  "title": "Título",
   "username": "Usuário",
   "password": "Senha",
   "websiteUrl": "Site / URL",
   "notes": "Notas",
   "category": "Categoria",
   "categoryGeneral": "Geral",
-  "categoryWork": "Trabalho",
-  "categoryPersonal": "Pessoal",
-  "securityHealth": "Saúde de Segurança",
-  "passwordAnalysis": "Análise de Senhas",
-  "securityScore": "Pontuação de Segurança",
-  "weakPasswords": "Senhas Fracas",
-  "reusedPasswords": "Senhas Reutilizadas",
-  "compromisedPasswords": "Senhas Comprometidas",
-  "strongPasswords": "Senhas Fortes",
-  "analysisDetails": "Detalhes da Análise",
-  "weakReusedRecommendation": "Recomenda-se alterar as senhas fracas ou reutilizadas para melhorar a segurança.",
-  "noSecurityIssues": "Nenhum problema de segurança encontrado.",
-  "excellentSecure": "Excelente! Suas senhas estão seguras.",
-  "refresh": "Atualizar",
-  "lastAnalyzedRecently": "Última análise há pouco tempo",
   "globalSecurityScore": "Pontuação de Segurança Global",
   "weakPasswordsCount": "{count} Senhas Fracas",
   "@weakPasswordsCount": {
@@ -200,8 +138,6 @@
   "regenerate": "Regerar",
   "accept": "Aceitar",
   "securityHealthTitle": "Saúde das Minhas Senhas",
-  "csvActionsTitle": "Importar / Exportar",
-  "importCsv": "Importar de CSV / XML",
   "exportCsv": "Exportar para CSV",
   "exportXml": "Exportar para XML",
   "createMasterPassword": "Criar Senha Mestra",
@@ -212,7 +148,6 @@
   "confirmPasswordLabel": "Confirmar Senha",
   "registerSave": "Registrar e Salvar",
   "unlock": "Desbloquear",
-  "incorrectPassword": "Senha incorreta. Tente novamente.",
   "unexpectedError": "Erro inesperado: {error}",
   "@unexpectedError": {
     "placeholders": {
@@ -223,14 +158,6 @@
   },
   "logoutError": "Erro ao sair: {error}",
   "@logoutError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "googleSignInError": "Erro ao fazer login no Google: {error}",
-  "@googleSignInError": {
     "placeholders": {
       "error": {
         "type": "String"
@@ -267,14 +194,6 @@
   },
   "passwordLengthHelper": "Sempre incluirá pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo.",
   "newNameLabel": "Novo nome",
-  "fixedPrefixLabel": "Prefixo fixo",
-  "fixedPrefixHelper": "Exemplo: Key",
-  "numbersListLabel": "Lista de números (separados por vírgula)",
-  "numbersListHelper": "Exemplo: 10, 20, 30",
-  "specialSymbolLabel": "Símbolo especial",
-  "specialSymbolHelper": "Exemplo: _",
-  "titleLettersLabel": "Letras do título",
-  "titleLettersHelper": "Quantidade de caracteres obtidos do título.",
   "criticalDanger": "PERIGO CRÍTICO!",
   "csvExportWarning": "ATENÇÃO! O arquivo CSV que você vai gerar NÃO está criptografado. Qualquer pessoa ou aplicativo com acesso ao seu celular poderá ver suas senhas em texto limpo. Recomenda-se fortemente transferir ou copiar este arquivo para um local seguro (como seu computador pessoal) e apagá-lo imediatamente da pasta de Downloads deste celular.",
   "understandRiskSave": "Entendo o risco, salvar",
@@ -297,29 +216,6 @@
     }
   },
   "authFailed": "Autenticação biométrica falhou.",
-  "cloudSyncTitle": "Sincronizar com o Google Drive",
-  "cloudSyncSubtitle": "Vincule sua conta do Google para fazer backup do seu banco de dados local com segurança.",
-  "connectGoogleDrive": "Conectar Google Drive",
-  "linkedAccount": "Conta vinculada:\n{email}",
-  "@linkedAccount": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "lastBackup": "Último backup: {time}",
-  "@lastBackup": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "noBackupsOnAccount": "Nenhum backup salvo nesta conta ainda.",
-  "uploadToDrive": "Enviar para o Drive",
-  "downloadFromDrive": "Baixar do Drive",
-  "disconnectGoogleDrive": "Desconectar Google Drive",
   "emptyKeychain": "Chaveiro Vazio",
   "emptyKeychainSubtitle": "Adicione uma conta usando o botão inferior (+) ou importe um arquivo CSV no menu superior.",
   "noMatchesFound": "Nenhuma correspondência encontrada.",
@@ -339,9 +235,6 @@
   "generatePasswordTooltip": "Gerar senha",
   "titleOrServiceName": "Título / Nome do serviço",
   "newCredential": "Nova Credencial",
-  "connectionCancelled": "Conexão cancelada",
-  "connectGoogleDriveFirst": "Por favor, conecte o Google Drive primeiro.",
-  "sessionPasswordUnavailable": "Senha da sessão não disponível.",
   "checkStorageError": "Erro ao verificar o estado do armazenamento: {error}",
   "@checkStorageError": {
     "placeholders": {
@@ -360,8 +253,6 @@
     }
   },
   "fingerprintSetupReason": "Confirme sua digital para ativar o acesso biométrico",
-  "localDbNotExist": "O arquivo de banco de dados local não existe.",
-  "cannotReadSelectedFile": "Não foi possível ler os dados do arquivo selecionado.",
   "passwordEmpty": "A senha não pode estar vazia.",
   "passwordsDoNotMatch": "As senhas não coincidem.",
   "dbInitError": "Erro ao inicializar o banco de dados: {error}",
@@ -374,38 +265,9 @@
   },
   "enterMasterPasswordPrompt": "Por favor, insira sua senha mestra.",
   "incorrectPasswordError": "Senha incorreta. Tente novamente.",
-  "deleteFromDrive": "Excluir Dados do Drive",
-  "deleteDriveTitle": "Excluir do Drive?",
-  "deleteDriveWarning": "Tem certeza de que deseja excluir seu backup do Google Drive? Esta ação não pode ser desfeita.",
-  "deleteDriveSuccess": "Backup excluído do Drive com sucesso.",
-  "deleteDriveError": "Erro ao excluir do Drive: {error}",
-  "@deleteDriveError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "deletingFromDrive": "Excluindo backup do Drive...",
-  "premiumTitle": "Cerberus Premium",
-  "premiumSubtitle": "Desbloqueie todo o potencial do seu gestor de palavras-passe com um pagamento único vitalício:",
-  "premiumFeatureDriveTitle": "Cópia de segurança no Google Drive",
-  "premiumFeatureDriveSubtitle": "Sincronize e restaure os seus dados na nuvem.",
-  "premiumFeatureCsvTitle": "Importação e Exportação",
-  "premiumFeatureCsvSubtitle": "Importe suas credenciais do KDBX, 1PUX, Json, XML e CSV. Exporte para KDBX, Json, XML e CSV.",
-  "premiumBuyButton": "Comprar Premium (1,99 €)",
-  "premiumRestoreButton": "Restaurar compra anterior",
-  "premiumSuccessMessage": "Compras restauradas com sucesso.",
-  "menuHaztePremium": "Adquira o Premium",
-  "menuCuentaPremium": "Conta Premium",
-  "menuRecuperarPremium": "Recuperar conta premium",
-  "premiumActiveMessage": "Obrigado pelo seu apoio! Tem acesso ilimitado vitalício às seguintes funcionalidades:",
   "importData": "Importar",
-  "importDataSubtitle": "Importar de KDBX, 1PUX, Json, CSV ou XML",
   "exportData": "Exportar",
-  "exportDataSubtitle": "Selecione o formato para exportar",
   "exportToKdbx": "Exportar para KDBX",
-  "passwordRequired": "Senha necessária para exportar",
   "exportToJson": "Export to JSON",
   "exportJsonRecommended": "For security, we recommend protecting this file with a password.",
   "exportJsonSecureBtn": "Exportar Json criptografado (Recomendado)",
@@ -415,20 +277,13 @@
   "importFormatsList": "Você pode importar os seguintes formatos:\n  - KDBX\n  - 1PUX\n  - Json\n  - XML\n  - CSV",
   "historyTitle": "Histórico de Senhas",
   "historyEmpty": "Nenhuma senha antiga salva.",
-  "historyCopied": "Copiado para a área de transferência",
   "historyMainPassword": "Senha Principal",
   "historyChangedAt": "Alterada em {date}",
   "historyCloseBtn": "FECHAR",
   "historyViewBtn": "Ver histórico",
   "attachmentsTitle": "Anexos",
-  "openingFile": "Abrindo arquivo...",
-  "attachmentSaved": "Anexo salvo",
-  "scanTotpQr": "Escanear QR TOTP",
-  "totpSecretLabel": "Segredo TOTP (Base32) opcional",
-  "pasteFromClipboard": "Colar da área de transferência",
-  "scanQrTooltip": "Escanear QR",
-  "processingFile": "Processando...",
-  "addBtn": "Adicionar",
-  "closeBtn": "Fechar",
-  "noPreviousPurchases": "Nenhuma compra anterior encontrada nesta conta do Google."
+  "localBackupTitle": "Cópia de segurança local",
+  "localBackupSubtitle": "Crie um ficheiro de cópia de segurança cifrado na localização que escolher ou restaure uma a partir de um ficheiro.",
+  "createLocalBackup": "Criar cópia cifrada",
+  "restoreLocalBackup": "Restaurar cópia cifrada"
 }

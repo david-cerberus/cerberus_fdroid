@@ -44,5 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# FVM Version Cache
+# Local tooling and scratch files
 .fvm/
+.fvmrc
+.vscode/
+scratch/
+.agents/

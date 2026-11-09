@@ -4,25 +4,27 @@ Este archivo registra el historial de versiones, funciones implementadas, correc
 
 ---
 
+## [1.1.8+42] - 2026-11-09
+### Edición F-Droid 100% offline
+- **Sin conexión a internet**:
+  - Eliminadas todas las dependencias y llamadas de red de la aplicación.
+  - Sustituidos los iconos remotos de los sitios por avatares locales generados con la inicial y un color estable derivado del nombre del sitio.
+  - Eliminada la consulta a Digital Asset Links; el autocompletado usa el dominio web o el nombre del paquete.
+  - Sustituidas las fuentes descargadas en ejecución por las fuentes del sistema.
+- **Sin servicios externos**:
+  - Eliminados los componentes de cuentas externas, reseñas y almacenamiento remoto.
+  - Eliminado el permiso de red del AndroidManifest; el APK no solicita acceso a internet.
+- **Todas las funciones desbloqueadas**:
+  - No existen bloqueos ni restricciones: todas las funciones están disponibles para todos los usuarios.
+- **Copia de seguridad local cifrada**:
+  - Se mantiene la exportación e importación de archivos cifrados (`.cjson`) con el mismo cifrado que la base de datos.
+
+---
+
 ## [1.1.7+41] - 2026-09-16
-### Desbloqueo y Transición a Modelo Gratuito
-- **Receta de publicación en F-Droid**:
-  - Creado el archivo de metadatos/receta `com.dsvdevelopment.cerberus.yml` adaptado para el repositorio oficial `fdroiddata` de F-Droid con compilación estándar de Flutter.
-  - Metadatos (`Summary` y `Description`) configurados en inglés según los estándares de F-Droid y correo de soporte oficial configurado.
-- **Todas las funciones Premium 100% gratuitas**:
-  - `isPremiumNotifier` configurado por defecto en `true` en `lib/widgets/premium_gate.dart`.
-  - En `lib/main.dart`, se fija `isPremiumNotifier.value = true` y se pausa la inicialización de facturación en Google Play (`PurchaseService().initialize(...)`) para evitar errores en clientes tras eliminar los "Productos Únicos" en Google Play Console.
-  - Ocultados los botones *"Hazte Premium"* y *"Recuperar compras"* en el menú emergente de `lib/screens/home_screen.dart`.
-  - Las herramientas de **Sincronización en la Nube**, **Importar** y **Exportar** quedan completamente abiertas y sin insignias de bloqueo para todos los usuarios.
-- **Compilación de Producción App Bundle (`.aab`)**:
-  - Compilación exitosa de la versión `1.1.7+41`.
-  - Archivo `app-release.aab` generado y transferido a `G:\Mi unidad\APPs\Cerberus\archivos`.
-- **Instrucciones de reactivación futura del servicio de pago**:
-  - Para volver a cobrar en el futuro si la app tiene éxito:
-    1. Volver a crear y activar el producto `cerberus_premium_lifetime` en Google Play Console.
-    2. En `lib/widgets/premium_gate.dart`: restablecer `isPremiumNotifier = ValueNotifier(false);`.
-    3. En `lib/main.dart`: descomentar la lectura de `premium_purchased` y la llamada a `PurchaseService().initialize(...)`.
-    4. En `lib/screens/home_screen.dart`: descomentar el bloque de opciones del menú `buy_premium`, `restore_premium` y `premium_info`.
+### Preparación de la edición F-Droid
+- Metadatos de publicación adaptados para el repositorio oficial de F-Droid.
+- Compilación estándar de Flutter y funciones de la aplicación disponibles sin restricciones.
 
 ---
 
@@ -54,7 +56,7 @@ Este archivo registra el historial de versiones, funciones implementadas, correc
     - **Cap del 60%** si la tasa de reutilización de contraseñas supera el 30%.
 - **Indicador y Aviso Visual en la UI**:
   - Añadido distintivo de advertencia en la pantalla de salud de seguridad (`SecurityHealthScreen`) cuando la puntuación global está limitada por un riesgo crítico (`isCapped == true`).
-  - Actualizados los colores e indicadores de estado en `home_screen.dart` para sincronizarse con los nuevos rangos de puntuación del servicio.
+  - Actualizados los colores e indicadores de estado en `home_screen.dart` para alinearse con los nuevos rangos de puntuación del servicio.
 
 ---
 

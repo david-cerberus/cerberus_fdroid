@@ -77,7 +77,7 @@ void main() {
         title: 'Google Account',
         username: 'user@gmail.com',
         password: 'GooglePassword123',
-        website: 'https://google.com',
+        website: 'example.com',
         notes: 'Personal email',
       );
 

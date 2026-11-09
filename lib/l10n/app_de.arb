@@ -23,45 +23,6 @@
       }
     }
   },
-  "connectedDriveSuccess": "Erfolgreich mit Google Drive verbunden.",
-  "connectedDriveError": "Fehler beim Verbinden mit Google Drive: {error}",
-  "@connectedDriveError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "driveSessionClosed": "Google Drive-Sitzung geschlossen.",
-  "driveSignOutError": "Fehler beim Abmelden von Google: {error}",
-  "@driveSignOutError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "uploadingBackup": "Backup wird auf Google Drive hochgeladen...",
-  "backupUploadSuccess": "Backup erfolgreich auf Drive hochgeladen.",
-  "backupUploadError": "Fehler beim Hochladen auf Drive: {error}",
-  "@backupUploadError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "downloadingBackup": "Suche und lade Backup von Google Drive herunter...",
-  "backupRestoreSuccess": "Backup erfolgreich von Drive wiederhergestellt.",
-  "noBackupsOnDrive": "Keine Backups auf Drive gefunden.",
-  "backupDownloadError": "Fehler beim Herunterladen von Drive: {error}",
-  "@backupDownloadError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
   "csvImportSuccess": "Erfolg! {count} Passwörter wurden importiert.",
   "@csvImportSuccess": {
     "placeholders": {
@@ -113,48 +74,25 @@
   "addCustomField": "Benutzerdefiniertes Feld hinzufügen",
   "titleRequired": "Titel ist erforderlich",
   "deleteCredentialTitle": "Anmeldedaten löschen?",
-  "deleteCredentialContent": "Die Anmeldedaten werden in den Papierkorb verschoben. Sie können sie wiederherstellen oder die Änderung synchronisieren.",
+  "deleteCredentialContent": "Die Anmeldedaten werden in den Papierkorb verschoben. Sie können sie jederzeit wiederherstellen.",
   "cancel": "Abbrechen",
   "delete": "Löschen",
-  "disconnectDriveTitle": "Google Drive trennen?",
-  "disconnectDriveContent": "Bist du sicher, dass du deine Google Drive-Verbindung trennen möchtest? Automatische Backups werden deaktiviert.",
-  "disconnect": "Trennen",
   "manageCategories": "Kategorien verwalten",
-  "cannotDeleteGeneral": "Die Kategorie 'Allgemein' kann nicht gelöscht werden.",
   "categoryExists": "Diese Kategorie existiert bereits.",
   "close": "Schließen",
   "renameCategory": "Kategorie umbenennen",
   "save": "Speichern",
   "passwordPattern": "Passwortgenerator",
-  "capitalizeRandomLetter": "Zufälligen Buchstaben großschreiben",
   "customPatternSaved": "¡Generador guardado con éxito!",
   "biometricRequiredExport": "Biometrische Authentifizierung ist für den Export erforderlich und auf diesem Gerät nicht verfügbar.",
-  "credentials": "Zugangsdaten",
   "search": "Suchen...",
-  "addCredential": "Anmeldedaten hinzufügen",
   "editCredential": "Anmeldedaten bearbeiten",
-  "title": "Titel",
   "username": "Benutzername",
   "password": "Passwort",
   "websiteUrl": "Website / URL",
   "notes": "Notizen",
   "category": "Kategorie",
   "categoryGeneral": "Allgemein",
-  "categoryWork": "Arbeit",
-  "categoryPersonal": "Persönlich",
-  "securityHealth": "Sicherheitsstatus",
-  "passwordAnalysis": "Passwort-Analyse",
-  "securityScore": "Sicherheitsscore",
-  "weakPasswords": "Schwache Passwörter",
-  "reusedPasswords": "Wiederverwendete Passwörter",
-  "compromisedPasswords": "Kompromittierte Passwörter",
-  "strongPasswords": "Starke Passwörter",
-  "analysisDetails": "Details der Analyse",
-  "weakReusedRecommendation": "Es wird empfohlen, schwache oder wiederverwendete Passwörter zu ändern, um die Sicherheit zu verbessern.",
-  "noSecurityIssues": "Keine Sicherheitsprobleme gefunden.",
-  "excellentSecure": "Hervorragend! Deine Passwörter sind sicher.",
-  "refresh": "Aktualisieren",
-  "lastAnalyzedRecently": "Zuletzt vor kurzem analysiert",
   "globalSecurityScore": "Globaler Sicherheitsscore",
   "weakPasswordsCount": "{count} schwache Passwörter",
   "@weakPasswordsCount": {
@@ -200,8 +138,6 @@
   "regenerate": "Neu generieren",
   "accept": "Akzeptieren",
   "securityHealthTitle": "Sicherheitsstatus meiner Passwörter",
-  "csvActionsTitle": "Importieren / Exportieren",
-  "importCsv": "Aus CSV / XML importieren",
   "exportCsv": "In CSV exportieren",
   "exportXml": "In XML exportieren",
   "createMasterPassword": "Master-Passwort erstellen",
@@ -212,7 +148,6 @@
   "confirmPasswordLabel": "Passwort bestätigen",
   "registerSave": "Registrieren & Speichern",
   "unlock": "Entsperren",
-  "incorrectPassword": "Falsches Passwort. Bitte versuche es erneut.",
   "unexpectedError": "Unerwarteter Fehler: {error}",
   "@unexpectedError": {
     "placeholders": {
@@ -223,14 +158,6 @@
   },
   "logoutError": "Fehler beim Abmelden: {error}",
   "@logoutError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "googleSignInError": "Fehler bei der Google-Anmeldung: {error}",
-  "@googleSignInError": {
     "placeholders": {
       "error": {
         "type": "String"
@@ -267,14 +194,6 @@
   },
   "passwordLengthHelper": "Es wird immer mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Symbol enthalten sein.",
   "newNameLabel": "Neuer Name",
-  "fixedPrefixLabel": "Festes Präfix",
-  "fixedPrefixHelper": "Beispiel: Key",
-  "numbersListLabel": "Zahlenliste (kommagetrennt)",
-  "numbersListHelper": "Beispiel: 10, 20, 30",
-  "specialSymbolLabel": "Spezialsymbol",
-  "specialSymbolHelper": "Beispiel: _",
-  "titleLettersLabel": "Titelbuchstaben",
-  "titleLettersHelper": "Anzahl der aus dem Titel übernommenen Zeichen.",
   "criticalDanger": "KRITISCHE GEFAHR!",
   "csvExportWarning": "ACHTUNG! Die zu erstellende CSV-Datei ist NICHT verschlüsselt. Jeder mit Zugriff auf dein Gerät kann deine Passwörter im Klartext sehen. Es wird dringend empfohlen, diese Datei an einen sicheren Ort (z. B. deinen PC) zu übertragen und sofort aus dem Downloads-Ordner dieses Telefons zu löschen.",
   "understandRiskSave": "Ich verstehe das Risiko, speichern",
@@ -297,29 +216,6 @@
     }
   },
   "authFailed": "Biometrische Authentifizierung fehlgeschlagen.",
-  "cloudSyncTitle": "Mit Google Drive synchronisieren",
-  "cloudSyncSubtitle": "Verknüpfe dein Google-Konto, um deine lokale Datenbank sicher zu sichern.",
-  "connectGoogleDrive": "Google Drive verbinden",
-  "linkedAccount": "Verknüpftes Konto:\n{email}",
-  "@linkedAccount": {
-    "placeholders": {
-      "email": {
-        "type": "String"
-      }
-    }
-  },
-  "lastBackup": "Letztes Backup: {time}",
-  "@lastBackup": {
-    "placeholders": {
-      "time": {
-        "type": "String"
-      }
-    }
-  },
-  "noBackupsOnAccount": "Noch keine Backups in diesem Konto gespeichert.",
-  "uploadToDrive": "Auf Drive hochladen",
-  "downloadFromDrive": "Von Drive herunterladen",
-  "disconnectGoogleDrive": "Google Drive trennen",
   "emptyKeychain": "Leerer Schlüsselbund",
   "emptyKeychainSubtitle": "Füge ein Konto über die Schaltfläche unten (+) hinzu oder importiere eine CSV-Datei aus dem oberen Menü.",
   "noMatchesFound": "Keine Treffer gefunden.",
@@ -339,9 +235,6 @@
   "generatePasswordTooltip": "Passwort generieren",
   "titleOrServiceName": "Titel / Dienstname",
   "newCredential": "Neue Anmeldedaten",
-  "connectionCancelled": "Verbindung abgebrochen",
-  "connectGoogleDriveFirst": "Bitte verbinde zuerst Google Drive.",
-  "sessionPasswordUnavailable": "Sitzungspasswort nicht verfügbar.",
   "checkStorageError": "Fehler beim Überprüfen des Speicherstatus: {error}",
   "@checkStorageError": {
     "placeholders": {
@@ -360,8 +253,6 @@
     }
   },
   "fingerprintSetupReason": "Bestätige deinen Fingerabdruck, um den biometrischen Zugriff zu aktivieren",
-  "localDbNotExist": "Lokale Datenbankdatei existiert nicht.",
-  "cannotReadSelectedFile": "Daten aus der ausgewählten Datei konnten nicht gelesen werden.",
   "passwordEmpty": "Das Passwort darf nicht leer sein.",
   "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein.",
   "dbInitError": "Fehler beim Initialisieren der Datenbank: {error}",
@@ -374,38 +265,9 @@
   },
   "enterMasterPasswordPrompt": "Bitte gib dein Master-Passwort ein.",
   "incorrectPasswordError": "Falsches Passwort. Bitte versuche es erneut.",
-  "deleteFromDrive": "Daten von Drive löschen",
-  "deleteDriveTitle": "Von Drive löschen?",
-  "deleteDriveWarning": "Bist du sicher, dass du dein Backup von Google Drive löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
-  "deleteDriveSuccess": "Backup erfolgreich von Drive gelöscht.",
-  "deleteDriveError": "Fehler beim Löschen von Drive: {error}",
-  "@deleteDriveError": {
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
-  "deletingFromDrive": "Backup wird von Drive gelöscht...",
-  "premiumTitle": "Cerberus Premium",
-  "premiumSubtitle": "Schalten Sie das volle Potenzial Ihres Passwort-Managers mit einer einmaligen lebenslangen Zahlung frei:",
-  "premiumFeatureDriveTitle": "Google Drive Backup",
-  "premiumFeatureDriveSubtitle": "Synchronisieren Sie Ihre Daten und stellen Sie sie in der Cloud wieder her.",
-  "premiumFeatureCsvTitle": "Import & Export",
-  "premiumFeatureCsvSubtitle": "Importieren Sie Ihre Anmeldeinformationen aus KDBX, 1PUX, Json, XML und CSV. Exportieren Sie nach KDBX, Json, XML und CSV.",
-  "premiumBuyButton": "Premium kaufen (1,99 €)",
-  "premiumRestoreButton": "Vorherigen Kauf wiederherstellen",
-  "premiumSuccessMessage": "Käufe erfolgreich wiederhergestellt.",
-  "menuHaztePremium": "Premium erwerben",
-  "menuCuentaPremium": "Premium-Konto",
-  "menuRecuperarPremium": "Premium-Konto wiederherstellen",
-  "premiumActiveMessage": "Vielen Dank für Ihre Unterstützung! Sie haben lebenslangen unbegrenzten Zugriff auf die folgenden Funktionen:",
   "importData": "Importieren",
-  "importDataSubtitle": "Aus KDBX, 1PUX, Json, CSV oder XML importieren",
   "exportData": "Exportieren",
-  "exportDataSubtitle": "Wählen Sie das Format für den Export",
   "exportToKdbx": "Nach KDBX exportieren",
-  "passwordRequired": "Passwort für den Export erforderlich",
   "exportToJson": "Export to JSON",
   "exportJsonRecommended": "For security, we recommend protecting this file with a password.",
   "exportJsonSecureBtn": "Verschlüsseltes Json exportieren (Empfohlen)",
@@ -415,20 +277,13 @@
   "importFormatsList": "Sie können folgende Formate importieren:\n  - KDBX\n  - 1PUX\n  - Json\n  - XML\n  - CSV",
   "historyTitle": "Passwort-Verlauf",
   "historyEmpty": "Keine alten Passwörter gespeichert.",
-  "historyCopied": "In die Zwischenablage kopiert",
   "historyMainPassword": "Hauptpasswort",
   "historyChangedAt": "Geändert am {date}",
   "historyCloseBtn": "SCHLIESSEN",
   "historyViewBtn": "Verlauf ansehen",
   "attachmentsTitle": "Anhänge",
-  "openingFile": "Datei wird geöffnet...",
-  "attachmentSaved": "Anhang gespeichert",
-  "scanTotpQr": "TOTP QR scannen",
-  "totpSecretLabel": "TOTP-Geheimnis (Base32) optional",
-  "pasteFromClipboard": "Aus Zwischenablage einfügen",
-  "scanQrTooltip": "QR scannen",
-  "processingFile": "Verarbeitung...",
-  "addBtn": "Hinzufügen",
-  "closeBtn": "Schließen",
-  "noPreviousPurchases": "Es wurden keine vorherigen Käufe in diesem Google-Konto gefunden."
+  "localBackupTitle": "Lokale Sicherung",
+  "localBackupSubtitle": "Erstelle eine verschlüsselte Sicherungsdatei an einem Ort deiner Wahl oder stelle eine aus einer Datei wieder her.",
+  "createLocalBackup": "Verschlüsselte Sicherung erstellen",
+  "restoreLocalBackup": "Verschlüsselte Sicherung wiederherstellen"
 }

@@ -4,20 +4,15 @@ import 'dart:typed_data';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'models/entry_model.dart';
 import 'screens/home_screen.dart';
 import 'services/database_helper.dart';
 import 'models/credential_entry.dart' as ce;
-import 'services/google_drive_service.dart';
-import 'services/purchase_service.dart';
-import 'widgets/premium_gate.dart';
 import 'services/import_export_service.dart';
 import 'services/import_export/json_format_adapter.dart';
 import 'services/import_export/encrypted_json_format_adapter.dart';
@@ -32,21 +27,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   const storage = FlutterSecureStorage();
-
-  // Premium status: Currently free for all users (in-app products disabled in Google Play).
-  // To restore paid premium in the future:
-  // 1. Uncomment the secure storage read and PurchaseService().initialize(...)
-  // 2. Set isPremiumNotifier default back to false in premium_gate.dart
-  isPremiumNotifier.value = true;
-  /*
-  final premiumStatus = await storage.read(key: 'premium_purchased');
-  final isPremium = premiumStatus == 'true';
-  isPremiumNotifier.value = isPremium;
-
-  PurchaseService().initialize((isPremiumStatus) {
-    isPremiumNotifier.value = isPremiumStatus;
-  });
-  */
 
   // Initialize Android Autofill MethodChannel Listener
   AutofillHandlerService.initialize();
@@ -115,13 +95,11 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.light,
                 scaffoldBackgroundColor: const Color(0xFFF8FAFC),
                 colorScheme: lightScheme,
-                textTheme: GoogleFonts.rubikTextTheme(ThemeData.light().textTheme),
               ),
               darkTheme: ThemeData(
                 useMaterial3: true,
                 brightness: Brightness.dark,
                 colorScheme: darkScheme,
-                textTheme: GoogleFonts.rubikTextTheme(ThemeData.dark().textTheme),
               ),
               home: const AuthWrapper(),
             );
@@ -144,7 +122,6 @@ class AuthWrapper extends StatefulWidget {
 class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
   AuthState _authState = AuthState.checking;
   final DatabaseHelper _dbHelper = DatabaseHelper();
-  final GoogleDriveService _driveService = GoogleDriveService();
   final LocalAuthentication _localAuth = LocalAuthentication();
   final _secureStorage = const FlutterSecureStorage();
   final ImportExportService _importExportService = ImportExportService()
@@ -154,14 +131,8 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     ..registerAdapter(OnePuxFormatAdapter());
 
   String? _errorMessage;
-  String? _syncStatusMessage;
-  String? _lastBackupTime;
   bool _isLoading = false;
-  bool _isSyncing = false;
-  
-  // Store the active session password in memory to reopen DB after sync/download
-  String? _sessionPassword;
-  GoogleSignInAccount? _googleUser;
+
   List<EntryModel> _entries = [];
 
   // Biometrics State
@@ -184,7 +155,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _checkStatus();
-    _checkGoogleSignIn();
   }
 
   @override
@@ -244,10 +214,8 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
 
     try {
       final hasPassword = await _dbHelper.hasMasterPassword();
-      final lastBackup = await _secureStorage.read(key: 'last_backup_time');
       setState(() {
         _authState = hasPassword ? AuthState.login : AuthState.register;
-        _lastBackupTime = lastBackup;
       });
       
       await _checkBiometricsSupport();
@@ -299,7 +267,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
           await _dbHelper.initDatabase(savedPassword);
           
           setState(() {
-            _sessionPassword = savedPassword;
             _authState = AuthState.authenticated;
           });
           await _loadEntries();
@@ -379,17 +346,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _checkGoogleSignIn() async {
-    try {
-      final user = await _driveService.checkCurrentUser();
-      setState(() {
-        _googleUser = user;
-      });
-    } catch (_) {
-      // Ignore background check errors
-    }
-  }
-
   Future<void> _loadEntries() async {
     try {
       final entries = await _dbHelper.getEntries();
@@ -402,302 +358,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
           SnackBar(content: Text(AppLocalizations.of(context)!.errorLoadingEntries(e.toString())), backgroundColor: Colors.redAccent),
         );
       }
-    }
-  }
-
-  Future<void> _handleGoogleSignIn() async {
-    setState(() {
-      _isSyncing = true;
-      _syncStatusMessage = null;
-    });
-    try {
-      final user = await _driveService.signIn();
-      setState(() {
-        _googleUser = user;
-        _syncStatusMessage = user != null
-            ? AppLocalizations.of(context)!.connectedDriveSuccess
-            : AppLocalizations.of(context)!.connectionCancelled;
-      });
-      if (mounted && user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.connectedDriveSuccess),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.googleSignInError(e.toString());
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.connectedDriveError(e.toString())),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isSyncing = false;
-      });
-    }
-  }
-
-  Future<void> _handleGoogleSignOut() async {
-    setState(() {
-      _isSyncing = true;
-      _syncStatusMessage = null;
-    });
-    try {
-      await _driveService.signOut();
-      setState(() {
-        _googleUser = null;
-        _syncStatusMessage = AppLocalizations.of(context)!.driveSessionClosed;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.driveSessionClosed),
-            backgroundColor: Colors.blueAccent,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.driveSignOutError(e.toString());
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.driveSignOutError(e.toString())),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isSyncing = false;
-      });
-    }
-  }
-
-  String _formatCurrentTime() {
-    final now = DateTime.now();
-    return "${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-  }
-
-  Future<void> _handleUpload() async {
-    if (_googleUser == null) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.connectGoogleDriveFirst;
-      });
-      return;
-    }
-
-    setState(() {
-      _isSyncing = true;
-      _syncStatusMessage = null;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.uploadingBackup),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
-
-    try {
-      final dbPath = await _dbHelper.getDatabasePath();
-      final localFile = File(dbPath);
-      if (!await localFile.exists()) {
-        throw Exception(AppLocalizations.of(context)!.localDbNotExist);
-      }
-      await _driveService.uploadDatabase(localFile);
-      final formattedTime = _formatCurrentTime();
-      await _secureStorage.write(key: 'last_backup_time', value: formattedTime);
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.backupUploadSuccess;
-        _lastBackupTime = formattedTime;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.backupUploadSuccess),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.backupUploadError(e.toString());
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.backupUploadError(e.toString())),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isSyncing = false;
-      });
-    }
-  }
-
-  Future<void> _handleDownload() async {
-    if (_googleUser == null) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.connectGoogleDriveFirst;
-      });
-      return;
-    }
-
-    if (_sessionPassword == null) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.sessionPasswordUnavailable;
-      });
-      return;
-    }
-
-    setState(() {
-      _isSyncing = true;
-      _syncStatusMessage = null;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.downloadingBackup),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
-
-    try {
-      final dbPath = await _dbHelper.getDatabasePath();
-      await _dbHelper.closeDatabase();
-
-      final downloadedFile = await _driveService.downloadDatabase(dbPath);
-      await _dbHelper.initDatabase(_sessionPassword!);
-
-      String? formattedTime;
-      if (downloadedFile != null) {
-        formattedTime = _formatCurrentTime();
-        await _secureStorage.write(key: 'last_backup_time', value: formattedTime);
-      }
-
-      setState(() {
-        if (downloadedFile != null) {
-          _syncStatusMessage = AppLocalizations.of(context)!.backupRestoreSuccess;
-          _lastBackupTime = formattedTime;
-        } else {
-          _syncStatusMessage = AppLocalizations.of(context)!.noBackupsOnDrive;
-        }
-      });
-      
-      if (mounted) {
-        if (downloadedFile != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.backupRestoreSuccess),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.noBackupsOnDrive),
-              backgroundColor: Colors.orangeAccent,
-            ),
-          );
-        }
-      }
-
-      await _loadEntries();
-      _startInactivityTimer();
-    } catch (e) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.backupDownloadError(e.toString());
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.backupDownloadError(e.toString())),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-      try {
-        await _dbHelper.initDatabase(_sessionPassword!);
-      } catch (_) {}
-    } finally {
-      setState(() {
-        _isSyncing = false;
-      });
-    }
-  }
-
-  Future<void> _handleDeleteDrive() async {
-    if (_googleUser == null) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.connectGoogleDriveFirst;
-      });
-      return;
-    }
-
-    setState(() {
-      _isSyncing = true;
-      _syncStatusMessage = null;
-    });
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.deletingFromDrive),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
-
-    try {
-      await _driveService.deleteDatabase();
-      
-      await _secureStorage.delete(key: 'last_backup_time');
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.deleteDriveSuccess;
-        _lastBackupTime = null;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.deleteDriveSuccess),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _syncStatusMessage = AppLocalizations.of(context)!.deleteDriveError(e.toString());
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.deleteDriveError(e.toString())),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
-      }
-    } finally {
-      setState(() {
-        _isSyncing = false;
-      });
     }
   }
 
@@ -921,7 +581,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     try {
       await _dbHelper.initDatabase(password);
       setState(() {
-        _sessionPassword = password;
         _authState = AuthState.authenticated;
         _passwordController.clear();
         _confirmPasswordController.clear();
@@ -958,7 +617,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     try {
       await _dbHelper.initDatabase(password);
       setState(() {
-        _sessionPassword = password;
         _authState = AuthState.authenticated;
         _passwordController.clear();
       });
@@ -992,7 +650,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     });
     try {
       await _dbHelper.closeDatabase();
-      _sessionPassword = null;
       _entries.clear();
       await _checkStatus();
     } catch (e) {
@@ -1021,15 +678,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
     if (_authState == AuthState.authenticated) {
       currentScreen = HomeScreen(
         entries: _entries,
-        googleUser: _googleUser,
-        isSyncing: _isSyncing,
-        syncStatusMessage: _syncStatusMessage,
-        lastBackupTime: _lastBackupTime,
-        onGoogleSignIn: _handleGoogleSignIn,
-        onGoogleSignOut: _handleGoogleSignOut,
-        onUpload: _handleUpload,
-        onDownload: _handleDownload,
-        onDeleteDrive: _handleDeleteDrive,
         onCsvImport: _handleCsvImport,
         onExportUnified: _handleExportUnified,
         onLogout: _handleLogout,
@@ -1038,9 +686,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
             await _dbHelper.insertEntry(entry);
             await _loadEntries();
             _startInactivityTimer();
-            if (_googleUser != null) {
-              await _handleUpload();
-            }
           } catch (e) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorAdding(e.toString()))));
@@ -1052,9 +697,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
             await _dbHelper.updateEntry(entry);
             await _loadEntries();
             _startInactivityTimer();
-            if (_googleUser != null) {
-              await _handleUpload();
-            }
           } catch (e) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUpdating(e.toString()))));
@@ -1066,9 +708,6 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
             await _dbHelper.deleteEntry(id);
             await _loadEntries();
             _startInactivityTimer();
-            if (_googleUser != null) {
-              await _handleUpload();
-            }
           } catch (e) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorDeleting(e.toString()))));
@@ -1158,7 +797,7 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
                       TextField(
                         controller: _passwordController,
                         obscureText: _obscureMasterPassword,
-                        style: GoogleFonts.firaCode(),
+                        style: const TextStyle(fontFamily: 'monospace'),
                         decoration: InputDecoration(
                           labelText: AppLocalizations.of(context)!.masterPasswordLabel,
                           prefixIcon: const Icon(Icons.lock_rounded),
@@ -1180,7 +819,7 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
                         TextField(
                           controller: _confirmPasswordController,
                           obscureText: _obscureConfirmPassword,
-                          style: GoogleFonts.firaCode(),
+                          style: const TextStyle(fontFamily: 'monospace'),
                           decoration: InputDecoration(
                             labelText: AppLocalizations.of(context)!.confirmPasswordLabel,
                             prefixIcon: const Icon(Icons.lock_rounded),

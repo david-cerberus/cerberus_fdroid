@@ -4,9 +4,6 @@ import 'package:uuid/uuid.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,26 +14,13 @@ import 'package:xml/xml.dart';
 import 'security_health_screen.dart';
 import '../main.dart';
 import '../l10n/app_localizations.dart';
-import '../widgets/premium_gate.dart';
-import '../services/purchase_service.dart';
-import '../services/review_service.dart';
 import '../services/database_helper.dart';
 import '../services/attachment_service.dart';
 import '../models/attachment_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<EntryModel> entries;
-  final GoogleSignInAccount? googleUser;
-  final bool isSyncing;
-  final String? syncStatusMessage;
-  
-  final String? lastBackupTime;
-  
-  final VoidCallback onGoogleSignIn;
-  final VoidCallback onGoogleSignOut;
-  final VoidCallback onUpload;
-  final VoidCallback onDownload;
-  final VoidCallback onDeleteDrive;
+
   final VoidCallback onCsvImport;
   final Future<void> Function(String, {String? password})? onExportUnified;
   final VoidCallback onLogout;
@@ -48,15 +32,6 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
     required this.entries,
-    required this.googleUser,
-    required this.isSyncing,
-    required this.syncStatusMessage,
-    this.lastBackupTime,
-    required this.onGoogleSignIn,
-    required this.onGoogleSignOut,
-    required this.onUpload,
-    required this.onDownload,
-    required this.onDeleteDrive,
     required this.onCsvImport,
     this.onExportUnified,
     required this.onLogout,
@@ -87,15 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   PasswordRecipe _activeRecipe = PasswordRecipe.defaultRecipe;
-  bool _hadPremiumBefore = false;
-
-  void _onPremiumChanged() {
-    if (isPremiumNotifier.value) {
-      setState(() {
-        _hadPremiumBefore = true;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -129,13 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
           await widget.onUpdateEntry(e.copyWith(notes: cleanNotes, customFields: newCustomFields));
         }
       }
-
-      // Check and request native store review if eligible
-      await ReviewService().checkAndRequestReview(widget.entries.length);
     });
 
     _loadSettings();
-    isPremiumNotifier.addListener(_onPremiumChanged);
   }
 
   Future<void> _loadSettings() async {
@@ -158,12 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
           _activeRecipe = PasswordRecipe.fromJson(decoded);
         });
       }
-
-      final hadPremium = await storage.read(key: 'had_premium_before') == 'true';
-      final hasSync = await storage.read(key: 'google_drive_enabled') == 'true';
-      setState(() {
-        _hadPremiumBefore = hadPremium || hasSync;
-      });
     } catch (_) {}
   }
 
@@ -181,74 +137,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _handleRestoreAction() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-    try {
-      await PurchaseService().restorePurchases();
-      // Give a tiny delay for billing streams to update and trigger persistence check
-      await Future.delayed(const Duration(seconds: 1));
-      await PurchaseService().checkPremiumStatus();
-      if (mounted) {
-        Navigator.pop(context); // Pop the progress indicator
-        if (isPremiumNotifier.value) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.premiumSuccessMessage),
-              backgroundColor: Colors.green,
-            ),
-          );
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Error'),
-              content: Text(AppLocalizations.of(context)!.noPreviousPurchases),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.pop(context); // Pop the progress indicator
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    }
-  }
-
   @override
   void dispose() {
     _searchController.dispose();
-    isPremiumNotifier.removeListener(_onPremiumChanged);
     super.dispose();
   }
 
-  Color _getAvatarColor(String title) {
-    if (title.isEmpty) return Colors.grey;
-    final code = title.toLowerCase().codeUnitAt(0);
+  Color _getAvatarColor(String siteName) {
+    if (siteName.isEmpty) return Colors.grey;
+    var hash = 0;
+    for (final codeUnit in siteName.toLowerCase().codeUnits) {
+      hash = (hash + codeUnit) % 100000;
+    }
     final colors = [
       const Color(0xFF3B82F6), // Blue
       const Color(0xFF8B5CF6), // Purple
@@ -259,49 +159,28 @@ class _HomeScreenState extends State<HomeScreen> {
       const Color(0xFF06B6D4), // Cyan
       const Color(0xFFF97316), // Orange
     ];
-    return colors[code % colors.length];
+    return colors[hash % colors.length];
   }
 
-  String? _getDomain(String website) {
-    if (website.isEmpty) return null;
-    String url = website.trim().toLowerCase();
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = 'https://$url';
+  String _getSiteName(EntryModel entry) {
+    final source = entry.website.trim().isNotEmpty ? entry.website.trim() : entry.title.trim();
+    if (source.isEmpty) return '';
+    var value = source.toLowerCase();
+    final schemeIndex = value.indexOf('://');
+    if (schemeIndex != -1) {
+      value = value.substring(schemeIndex + 3);
     }
-    try {
-      final uri = Uri.parse(url);
-      final host = uri.host;
-      if (host.startsWith('www.')) {
-        return host.substring(4);
-      }
-      return host.isNotEmpty ? host : null;
-    } catch (_) {
-      return null;
+    value = value.split('/').first;
+    if (value.startsWith('www.')) {
+      value = value.substring(4);
     }
+    return value.isNotEmpty ? value : entry.title.trim();
   }
 
   Widget _buildAvatar(EntryModel entry) {
-    final domain = _getDomain(entry.website);
-    final avatarColor = _getAvatarColor(entry.title);
-    final initial = entry.title.isNotEmpty ? entry.title[0].toUpperCase() : '?';
-
-    if (domain != null && domain.isNotEmpty) {
-      final logoUrl = 'https://www.google.com/s2/favicons?sz=128&domain=$domain';
-      return CircleAvatar(
-        backgroundColor: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: CachedNetworkImage(
-            imageUrl: logoUrl,
-            width: 28,
-            height: 28,
-            fit: BoxFit.contain,
-            placeholder: (context, url) => _buildTextAvatar(initial, avatarColor),
-            errorWidget: (context, url, error) => _buildTextAvatar(initial, avatarColor),
-          ),
-        ),
-      );
-    }
+    final siteName = _getSiteName(entry);
+    final avatarColor = _getAvatarColor(siteName);
+    final initial = siteName.isNotEmpty ? siteName[0].toUpperCase() : '?';
     return _buildTextAvatar(initial, avatarColor);
   }
 
@@ -769,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         TextField(
                           controller: passwordController,
                           obscureText: obscurePassword,
-                          style: GoogleFonts.firaCode(),
+                          style: const TextStyle(fontFamily: 'monospace'),
                           onChanged: (val) {
                             setModalState(() {});
                           },
@@ -1109,7 +988,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       Text(
                                         obscure ? '••••••••' : item.value,
-                                        style: GoogleFonts.firaCode(fontSize: 14),
+                                        style: const TextStyle(fontFamily: 'monospace', fontSize: 14),
                                       ),
                                     ],
                                   ),
@@ -1224,54 +1103,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _confirmDisconnectDrive() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.disconnectDriveTitle),
-        content: Text(AppLocalizations.of(context)!.disconnectDriveContent),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
-            onPressed: () {
-              Navigator.pop(context);
-              widget.onGoogleSignOut();
-            },
-            child: Text(AppLocalizations.of(context)!.disconnect),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  void _confirmDeleteDrive() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteDriveTitle),
-        content: Text(AppLocalizations.of(context)!.deleteDriveWarning),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
-            onPressed: () {
-              Navigator.pop(context);
-              widget.onDeleteDrive();
-            },
-            child: Text(AppLocalizations.of(context)!.deleteFromDrive),
-          ),
-        ],
-      ),
-    );
-  }
-  
   void _showManageCategoriesDialog() {
     final addController = TextEditingController();
     showDialog(
@@ -2179,10 +2010,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Center(
                       child: SelectableText(
                         generated,
-                        style: GoogleFonts.firaCode(
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF10B981),
+                          color: Color(0xFF10B981),
                         ),
                       ),
                     ),
@@ -2323,36 +2155,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.more_vert, color: isDark ? Colors.white70 : Colors.grey[800]),
                     onSelected: (value) async {
                       if (value == 'import_actions') {
-                        if (!isPremiumNotifier.value) {
-                          showDialog(context: context, builder: (context) => const PremiumPurchaseDialog());
-                          return;
-                        }
                         _showImportDialog();
                       } else if (value == 'export_actions') {
-                        if (!isPremiumNotifier.value) {
-                          showDialog(context: context, builder: (context) => const PremiumPurchaseDialog());
-                          return;
-                        }
                         _showExportDialog();
-                      } else if (value == 'cloud_sync') {
-                        final hasAccess = isPremiumNotifier.value || widget.googleUser != null;
-                        if (!hasAccess) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => const PremiumPurchaseDialog(),
-                          );
-                          return;
-                        }
-                        _showSyncModal();
-                      } else if (value == 'buy_premium') {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const PremiumPurchaseDialog(),
-                        );
-                      } else if (value == 'premium_info') {
-                        _showPremiumInfoDialog();
-                      } else if (value == 'restore_premium') {
-                        _handleRestoreAction();
+                      } else if (value == 'local_backup') {
+                        _showLocalBackupDialog();
                       } else if (value == 'manage_categories') {
                         _showManageCategoriesDialog();
                       } else if (value == 'password_recipe') {
@@ -2383,78 +2190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                     itemBuilder: (context) {
                       final isDark = Theme.of(context).brightness == Brightness.dark;
-                      // In-app products currently disabled in Google Play (App 100% free).
-                      // To restore paid options in the future:
-                      // Re-enable if (isPremium) ... else ... [buy_premium, restore_premium]
                       return [
-                        /*
-                        if (isPremium)
-                          PopupMenuItem<String>(
-                            enabled: true,
-                            value: 'premium_info',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/icon/premium_shield.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.menuCuentaPremium,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else ...[
-                          PopupMenuItem<String>(
-                            value: 'buy_premium',
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/icon/premium_shield.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.menuHaztePremium,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (_hadPremiumBefore)
-                            PopupMenuItem<String>(
-                              value: 'restore_premium',
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.restore_rounded, size: 20, color: Colors.blueAccent),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.menuRecuperarPremium,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                        const PopupMenuDivider(),
-                        */
                         PopupMenuItem(
                           value: 'health',
                           child: Row(
@@ -2516,25 +2252,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         PopupMenuItem(
-                          value: 'cloud_sync',
+                          value: 'local_backup',
                           child: Row(
                             children: [
-                              const Icon(Icons.cloud_sync_rounded, size: 20, color: Colors.blueAccent),
+                              const Icon(Icons.backup_rounded, size: 20, color: Colors.blueAccent),
                               const SizedBox(width: 8),
                               Expanded(
-                                child: Text(AppLocalizations.of(context)!.cloudSyncTitle),
-                              ),
-                              const SizedBox(width: 6),
-                              ValueListenableBuilder<bool>(
-                                valueListenable: isPremiumNotifier,
-                                builder: (context, isPremium, child) {
-                                  if (isPremium) return const SizedBox.shrink();
-                                  return Image.asset(
-                                    'assets/icon/premium_shield.png',
-                                    width: 18,
-                                    height: 18,
-                                  );
-                                },
+                                child: Text(AppLocalizations.of(context)!.localBackupTitle),
                               ),
                             ],
                           ),
@@ -2548,18 +2272,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: Text(AppLocalizations.of(context)!.importData),
                               ),
-                              const SizedBox(width: 6),
-                              ValueListenableBuilder<bool>(
-                                valueListenable: isPremiumNotifier,
-                                builder: (context, isPremium, child) {
-                                  if (isPremium) return const SizedBox.shrink();
-                                  return Image.asset(
-                                    'assets/icon/premium_shield.png',
-                                    width: 18,
-                                    height: 18,
-                                  );
-                                },
-                              ),
                             ],
                           ),
                         ),
@@ -2571,18 +2283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(AppLocalizations.of(context)!.exportData),
-                              ),
-                              const SizedBox(width: 6),
-                              ValueListenableBuilder<bool>(
-                                valueListenable: isPremiumNotifier,
-                                builder: (context, isPremium, child) {
-                                  if (isPremium) return const SizedBox.shrink();
-                                  return Image.asset(
-                                    'assets/icon/premium_shield.png',
-                                    width: 18,
-                                    height: 18,
-                                  );
-                                },
                               ),
                             ],
                           ),
@@ -2785,85 +2485,6 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   }
 
-  void _showPremiumInfoDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        final l10n = AppLocalizations.of(context)!;
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-          title: Row(
-            children: [
-              Image.asset(
-                'assets/icon/premium_shield.png',
-                width: 28,
-                height: 28,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l10n.menuCuentaPremium,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                l10n.premiumActiveMessage,
-                style: const TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              _buildInfoRow(context, Icons.cloud_done_rounded, l10n.premiumFeatureDriveTitle, l10n.premiumFeatureDriveSubtitle),
-              _buildInfoRow(context, Icons.import_export_rounded, l10n.premiumFeatureCsvTitle, l10n.premiumFeatureCsvSubtitle),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.close),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildInfoRow(BuildContext context, IconData icon, String title, String subtitle) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white60 : Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showAddFieldSelectionDialog(StateSetter parentSetState, List<Map<String, dynamic>> dynamicFields) {
     final List<Map<String, dynamic>> predefinedFields = [
       {'title': 'Usuario', 'icon': Icons.person_outline_rounded, 'isSecure': false},
@@ -2987,8 +2608,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showSyncModal() {
+  void _showLocalBackupDialog() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -2997,130 +2619,101 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 24,
-                top: 24,
-                left: 24,
-                right: 24,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + MediaQuery.of(context).padding.bottom + 24,
+            top: 24,
+            left: 24,
+            right: 24,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.cloud_sync_rounded, color: Colors.blueAccent),
-                        const SizedBox(width: 12),
-                        Text(
-                          AppLocalizations.of(context)!.cloudSyncTitle,
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
-                        ),
-                      ],
+                    const Icon(Icons.backup_rounded, color: Colors.blueAccent),
+                    const SizedBox(width: 12),
+                    Text(
+                      l10n.localBackupTitle,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
                     ),
-                    const Divider(height: 24),
-                    if (widget.googleUser == null) ...[
-                      Text(
-                        AppLocalizations.of(context)!.cloudSyncSubtitle,
-                        style: const TextStyle(color: Colors.grey, fontSize: 13),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        onPressed: widget.isSyncing
-                            ? null
-                            : () {
-                                Navigator.pop(context);
-                                widget.onGoogleSignIn();
-                              },
-                        icon: const Icon(Icons.login),
-                        label: Text(AppLocalizations.of(context)!.connectGoogleDrive),
-                      ),
-                    ] else ...[
-                      Text(
-                        AppLocalizations.of(context)!.linkedAccount(widget.googleUser!.email),
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.lastBackupTime != null 
-                            ? AppLocalizations.of(context)!.lastBackup(widget.lastBackupTime!) 
-                            : AppLocalizations.of(context)!.noBackupsOnAccount,
-                        style: const TextStyle(color: Colors.blueAccent, fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 20),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ElevatedButton.icon(
-                            onPressed: widget.isSyncing
-                                ? null
-                                : () {
-                                    Navigator.pop(context);
-                                    widget.onUpload();
-                                  },
-                            icon: const Icon(Icons.cloud_upload_rounded),
-                            label: Text(AppLocalizations.of(context)!.uploadToDrive, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton.icon(
-                            onPressed: widget.isSyncing
-                                ? null
-                                : () {
-                                    Navigator.pop(context);
-                                    widget.onDownload();
-                                  },
-                            icon: const Icon(Icons.cloud_download_rounded),
-                            label: Text(AppLocalizations.of(context)!.downloadFromDrive, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          ),
-                          const SizedBox(height: 8),
-                          OutlinedButton.icon(
-                            onPressed: widget.isSyncing
-                                ? null
-                                : () {
-                                    Navigator.pop(context);
-                                    _confirmDeleteDrive();
-                                  },
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.redAccent,
-                              side: const BorderSide(color: Colors.redAccent),
-                            ),
-                            icon: const Icon(Icons.delete_forever),
-                            label: Text(AppLocalizations.of(context)!.deleteFromDrive, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: widget.isSyncing
-                            ? null
-                            : () {
-                                Navigator.pop(context);
-                                _confirmDisconnectDrive();
-                              },
-                        style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
-                        icon: const Icon(Icons.logout),
-                        label: Text(AppLocalizations.of(context)!.disconnectGoogleDrive),
-                      ),
-                    ],
-                    if (widget.syncStatusMessage != null) ...[
-                      const SizedBox(height: 16),
-                      Text(
-                        widget.syncStatusMessage!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.blueAccent, fontSize: 13),
-                      ),
-                    ],
-                    const SizedBox(height: 12),
                   ],
                 ),
-              ),
-            );
-          },
+                const Divider(height: 24),
+                Text(
+                  l10n.localBackupSubtitle,
+                  style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showBackupExportPasswordDialog();
+                  },
+                  icon: const Icon(Icons.save_alt_rounded),
+                  label: Text(l10n.createLocalBackup),
+                ),
+                const SizedBox(height: 8),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    widget.onCsvImport();
+                  },
+                  icon: const Icon(Icons.restore_rounded),
+                  label: Text(l10n.restoreLocalBackup),
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
         );
       },
+    );
+  }
+
+  void _showBackupExportPasswordDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.createLocalBackup),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.exportJsonRecommended),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: l10n.passwordForFile,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isEmpty) return;
+              Navigator.pop(context);
+              if (widget.onExportUnified != null) {
+                widget.onExportUnified!('cjson', password: controller.text);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6750A4), foregroundColor: Colors.white),
+            child: Text(l10n.createLocalBackup),
+          ),
+        ],
+      ),
     );
   }
 

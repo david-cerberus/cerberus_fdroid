@@ -1,17 +1,28 @@
-# secure_password_manager
+# Cerberus
 
-A new Flutter project.
+Gestor de contraseñas Flutter para la edición F-Droid.
 
-## Getting Started
+## Características
 
-This project is a starting point for a Flutter application.
+- Funciona completamente sin conexión: no realiza peticiones de red ni descarga recursos en ejecución.
+- Almacenamiento local cifrado con SQLCipher y derivación de clave PBKDF2.
+- Autenticación biométrica y bloqueo por inactividad.
+- Copia de seguridad local cifrada: exportación e importación de archivos `.cjson`.
+- Importación y exportación en varios formatos (KDBX, 1PUX, JSON, XML y CSV).
+- Todas las funciones están desbloqueadas; no hay restricciones ni bloqueos.
 
-A few resources to get you started if this is your first Flutter project:
+## Desarrollo
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Requiere el SDK de Flutter instalado globalmente. Para preparar las dependencias y ejecutar las comprobaciones:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```sh
+flutter pub get
+flutter analyze
+flutter test
+```
+
+Para compilar el APK de publicación:
+
+```sh
+flutter build apk --release
+```
