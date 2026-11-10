@@ -1641,9 +1641,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       authenticated = await auth.authenticate(
         localizedReason: AppLocalizations.of(context)!.biometricReasonExport,
-        options: const AuthenticationOptions(
+        options: AuthenticationOptions(
           stickyAuth: true,
-          biometricOnly: true,
+          biometricOnly: (await auth.getAvailableBiometrics()).isNotEmpty,
         ),
       );
     } catch (e) {
@@ -1808,9 +1808,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       authenticated = await auth.authenticate(
         localizedReason: AppLocalizations.of(context)!.biometricReasonExport,
-        options: const AuthenticationOptions(
+        options: AuthenticationOptions(
           stickyAuth: true,
-          biometricOnly: true,
+          biometricOnly: (await auth.getAvailableBiometrics()).isNotEmpty,
         ),
       );
     } catch (e) {

@@ -248,6 +248,8 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
 
   Future<void> _authenticateWithBiometrics() async {
     try {
+      final hasEnrolledBiometrics = (await _localAuth.getAvailableBiometrics()).isNotEmpty;
+      if (!hasEnrolledBiometrics) return;
       final authenticated = await _localAuth.authenticate(
         localizedReason: AppLocalizations.of(context)!.fingerprintScanReason,
         options: const AuthenticationOptions(
@@ -287,6 +289,9 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
   Future<void> _askToEnableBiometrics(String password) async {
     final isAvailable = await _localAuth.canCheckBiometrics || await _localAuth.isDeviceSupported();
     if (!isAvailable) return;
+
+    final hasEnrolledBiometrics = (await _localAuth.getAvailableBiometrics()).isNotEmpty;
+    if (!hasEnrolledBiometrics) return;
 
     if (!mounted) return;
 
@@ -374,9 +379,10 @@ class _AuthWrapperState extends State<AuthWrapper> with WidgetsBindingObserver {
         }
         return;
       }
+      final hasEnrolledBiometrics = (await auth.getAvailableBiometrics()).isNotEmpty;
       authenticated = await auth.authenticate(
         localizedReason: AppLocalizations.of(context)!.biometricReasonExport,
-        options: const AuthenticationOptions(stickyAuth: true, biometricOnly: true),
+        options: AuthenticationOptions(stickyAuth: true, biometricOnly: hasEnrolledBiometrics),
       );
     } catch (e) {
       if (mounted) {

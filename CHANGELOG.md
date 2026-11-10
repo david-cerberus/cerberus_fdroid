@@ -18,6 +18,13 @@ Este archivo registra el historial de versiones, funciones implementadas, correc
   - No existen bloqueos ni restricciones: todas las funciones están disponibles para todos los usuarios.
 - **Copia de seguridad local cifrada**:
   - Se mantiene la exportación e importación de archivos cifrados (`.cjson`) con el mismo cifrado que la base de datos.
+- **Corregido**:
+  - Error "Error de autenticación" al crear una copia de seguridad cifrada en dispositivos sin biometría registrada: ahora la autenticación de exportación acepta el PIN/patrón del sistema como alternativa cuando no hay huella facial/dactilar configurada (aplica a exportación unificada, CSV y XML).
+  - El login biométrico ya no intenta abrir el prompt del sistema si no existe biometría registrada (cae directamente al login con contraseña maestra).
+- **Limpieza de repositorio**:
+  - Eliminadas las carpetas de plataforma no utilizadas (`ios/`, `macos/`, `linux/`, `windows/`): el proyecto compila solo para Android (edición F-Droid).
+  - Eliminados recursos sin usar (iconos de borrador, `ic_launcher.png` de plantilla, `encryption_public_key.pem`) y el artefacto de compilación `android/build/` (ahora ignorado en `.gitignore`).
+  - Retirados del control de versiones los archivos de configuración local (`.agents/`, `.fvmrc`, `.vscode/`) y el documento interno `RESUMEN APP.txt`.
 
 ---
 
